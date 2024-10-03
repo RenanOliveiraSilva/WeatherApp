@@ -49,7 +49,7 @@ export interface WeatherData {
 const api = axios.create({
   baseURL: "https://api.openweathermap.org/data/2.5/weather",
   params: {
-    APPID: "MINHA_CHAVE",
+    APPID: "MINHACHAVE",
     units: 'metric', // Temperatura em Celsius
     lang: 'pt', // Idioma em português
   },

@@ -1,9 +1,10 @@
 // src/screens/Index.js
 import React, { useEffect, useState } from 'react';
-import { Text, ScrollView, ImageBackground, View, ActivityIndicator, PermissionsAndroid, Platform } from "react-native";
+import { Text, ScrollView, ImageBackground, View, ActivityIndicator, PermissionsAndroid, Platform, Image } from "react-native";
 import * as Location from "expo-location";
 import { Header } from "../Header/Header";
 import { getWeatherData, WeatherData } from '../../services/api'; // Ajuste o caminho conforme necessário
+import { Ionicons } from '@expo/vector-icons';
 
 
 export default function Index() {
@@ -52,27 +53,39 @@ export default function Index() {
 
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         <Header />
-        <View className="h-1/2 p-4">
+        <View className="h-1/2 p-4 mr-2">
           {weatherData ? (
-            <>
-              <View className='flex flex-row w-full items-center justify-end bg-red-500 p-4 h-24'>
-                <View className='items-center justify-center bg-blue-500 h-full p-3'>
-                  <Text className="text-5xl text-white font-regular">{(weatherData.main.temp).toFixed(0)}°C</Text>
-
-                </View>
-                <View className='flex items-center justify-center bg-green-600 h-full'>
-
-                  <Text className="text-sm text-white font-light">Max {(weatherData.main.temp_max).toFixed(0)}</Text>
-                  <Text className="text-sm text-white font-light">Min {(weatherData.main.temp_min).toFixed(0)}</Text>
-
-                </View>
-                
+            <View className='flex flex-row mt-1 px-4'>
+              <View className='flex flex-1 h-44 items-start justify-start'>
+                <Image 
+                  source={require('../../assets/UIKIT/lua.png')}
+                  resizeMode='contain'
+                  className='h-25 w-25'
+                />
               </View>
-              
-                <Text className="text-4xl text-white font-bold">{weatherData.name}</Text>
-              <Text className="text-2xl text-white mt-2 capitalize">{weatherData.weather[0].description}</Text>
-              <Text className="text-xl text-white mt-2">Umidade: {weatherData.main.humidity}%</Text>
-            </>
+              <View className='flex flex-col w-1/2'>
+                <View className='flex flex-col w-full items-center justify-end p-4 h-44'>
+                  <View className='flex flex-row'>
+                    <View className='items-center justify-center  h-full p-3'>
+                      <Text className="text-6xl text-white font-semibold">{(weatherData.main.temp).toFixed(0)}°C</Text>
+
+                    </View>
+                    <View className='flex items-center justify-center h-full'>
+
+                      <Text className="text-sm text-white font-light">Max {(weatherData.main.temp_max).toFixed(0)}</Text>
+                      <Text className="text-sm text-white font-light">Min {(weatherData.main.temp_min).toFixed(0)}</Text>
+
+                    </View>
+
+                  </View>
+                  <Text className="text-xl text-white font-light"><Ionicons name="location-sharp" size={15}/> {weatherData.name}, {weatherData.sys.country} </Text>
+                  <Text className="text-2xl text-white font-semibold capitalize">{weatherData.weather[0].description}</Text>
+
+                </View>
+
+              </View>
+                  
+            </View>
           ) : (
             <ActivityIndicator size="large" color="#ffffff" />
           )}
