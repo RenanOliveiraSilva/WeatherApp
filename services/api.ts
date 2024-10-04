@@ -1,18 +1,16 @@
-// api.ts
-import axios, { AxiosResponse } from "axios";// Certifique-se de que está configurado corretamente
+// src/services/api.js
+import axios from 'axios';
+//import { OPENWEATHER_API_KEY } from '@env';
 
-// Definição de tipos para a resposta da API do OpenWeather
-export interface WeatherData {
-  coord: {
-    lon: number;
-    lat: number;
-  };
-  weather: {
+// Interface para Current Weather API
+export interface CurrentWeatherData {
+  coord: { lon: number; lat: number };
+  weather: Array<{
     id: number;
     main: string;
     description: string;
     icon: string;
-  }[];
+  }>;
   base: string;
   main: {
     temp: number;
@@ -23,50 +21,85 @@ export interface WeatherData {
     humidity: number;
   };
   visibility: number;
-  wind: {
-    speed: number;
-    deg: number;
-    gust?: number;
-  };
-  clouds: {
-    all: number;
-  };
+  wind: { speed: number; deg: number };
+  clouds: { all: number };
   dt: number;
-  sys: {
-    type?: number;
-    id?: number;
-    country: string;
-    sunrise: number;
-    sunset: number;
-  };
+  sys: { type: number; id: number; country: string; sunrise: number; sunset: number };
   timezone: number;
   id: number;
   name: string;
   cod: number;
 }
 
-// Criando uma instância do Axios com configurações padrão
-const api = axios.create({
-  baseURL: "https://api.openweathermap.org/data/2.5/weather",
-  params: {
-    APPID: "MINHA_CHAVE",
-    units: 'metric', // Temperatura em Celsius
-    lang: 'pt', // Idioma em português
-  },
-});
+// Interface para 3-Hour Forecast API
+export interface ForecastWeatherData {
+  cod: string;
+  message: number;
+  cnt: number;
+  list: Array<{
+    dt: number;
+    main: {
+      temp: number;
+      feels_like: number;
+      temp_min: number;
+      temp_max: number;
+      pressure: number;
+      sea_level: number;
+      grnd_level: number;
+      humidity: number;
+      temp_kf: number;
+    };
+    weather: Array<{
+      id: number;
+      main: string;
+      description: string;
+      icon: string;
+    }>;
+    clouds: { all: number };
+    wind: { speed: number; deg: number };
+    visibility: number;
+    pop: number;
+    sys: { pod: string };
+    dt_txt: string;
+  }>;
+}
 
-// Função para buscar dados climáticos com tipagem
-export const getWeatherData = async (lat: number, lon: number): Promise<WeatherData> => {
+const API_KEY = '55d8bc5b1f9f8ee61e20577cd85ed5e3'; // Substitua pela sua chave real
+
+// Função para obter o clima atual
+export const getCurrentWeatherData = async (latitude: number, longitude: number): Promise<CurrentWeatherData> => {
   try {
-    const response: AxiosResponse<WeatherData> = await api.get('', {
+    const response = await axios.get<CurrentWeatherData>('https://api.openweathermap.org/data/2.5/weather', {
       params: {
-        lat,
-        lon,
+        lat: latitude,
+        lon: longitude,
+        appid: API_KEY,
+        units: 'metric', // 'standard', 'metric', 'imperial'
+        lang: 'pt', // Idioma da resposta
       },
     });
     return response.data;
   } catch (error) {
-    console.error('Erro ao buscar dados climáticos:', error);
+    console.error('Erro ao buscar dados climáticos atuais:', error);
+    throw error;
+  }
+};
+
+// Função para obter a previsão de 3 horas
+export const getForecastWeatherData = async (latitude: number, longitude: number): Promise<ForecastWeatherData> => {
+  try {
+    const response = await axios.get<ForecastWeatherData>('https://api.openweathermap.org/data/2.5/forecast', {
+      params: {
+        lat: latitude,
+        lon: longitude,
+        appid: API_KEY,
+        units: 'metric',
+        lang: 'pt',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar dados de previsão climática:', error);
     throw error;
   }
 };

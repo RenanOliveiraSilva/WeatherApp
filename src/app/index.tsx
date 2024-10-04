@@ -1,19 +1,62 @@
 // src/screens/Index.js
 import React, { useEffect, useState } from 'react';
-import { Text, ScrollView, ImageBackground, View, ActivityIndicator, PermissionsAndroid, Platform } from "react-native";
+import { Text, ScrollView, ImageBackground, View } from "react-native";
+import { CurrentWeatherData, ForecastWeatherData, getCurrentWeatherData, getForecastWeatherData } from '../../services/api';
 import * as Location from "expo-location";
+
+
 import { Header } from "../Header/Header";
-import { getWeatherData, WeatherData } from '../../services/api'; // Ajuste o caminho conforme necessário
+import Weather from "../Weather";
+import Card from '../Card';
 
 
 export default function Index() {
   const [location, setLocation] = useState<Location.LocationObjectCoords | null>(null);
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [background, setBackground] = useState<any>(require('../../assets/UIKIT/Dia.png'));
+  const [currentWeatherData, setCurrentWeatherData] = useState<CurrentWeatherData | null>(null);
+  const [forecastWeatherData, setForecastWeatherData] = useState<ForecastWeatherData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+    // Função para determinar se é manhã, tarde ou noite
+  const determineTimeOfDay = (currentTime: number, sunrise: number, sunset: number): 'morning' | 'afternoon' | 'night' => {
+    const currentDate = new Date(currentTime * 1000);
+    const hours = currentDate.getHours();
+
+    if (currentTime >= sunrise && currentTime < sunset) {
+      if (hours >= 12 && hours < 18) {
+        return 'afternoon';
+      }
+      return 'morning';
+    } else {
+      return 'night';
+    }
+  };
+
+  // Função para atualizar a imagem de fundo
+  const updateBackgroundImage = (data: CurrentWeatherData) => {
+    const currentTime = data.dt; // Horário atual em Unix
+    const sunrise = data.sys.sunrise;
+    const sunset = data.sys.sunset;
+
+    const timeOfDay = determineTimeOfDay(currentTime, sunrise, sunset);
+
+    switch (timeOfDay) {
+      case 'morning':
+        setBackground(require('../../assets/UIKIT/Dia.png')); // Imagem de manhã
+        break;
+      case 'afternoon':
+        setBackground(require('../../assets/UIKIT/Tarde.png')); // Imagem de tarde
+        break;
+      case 'night':
+        setBackground(require('../../assets/UIKIT/Noite.png')); // Imagem de noite
+        break;
+      
+    }
+  };
+
   useEffect(() => {
-    (async () => {
+    const fetchWeather = async () => {
       try {
         // Solicitar permissões de localização
         let { status } = await Location.requestForegroundPermissionsAsync();
@@ -27,23 +70,31 @@ export default function Index() {
         let currentLocation = await Location.getCurrentPositionAsync({});
         setLocation(currentLocation.coords);
 
-        // Fazer a requisição para a API do OpenWeather com as coordenadas
-        const data: WeatherData = await getWeatherData(currentLocation.coords.latitude, currentLocation.coords.longitude);
-        setWeatherData(data);
+        // Obter dados climáticos atuais
+        const currentData: CurrentWeatherData = await getCurrentWeatherData(currentLocation.coords.latitude, currentLocation.coords.longitude);
+        setCurrentWeatherData(currentData);
+
+        // Atualizar a imagem de fundo com base no horário
+        updateBackgroundImage(currentData);
+
+        // Obter dados de previsão de 3 horas
+        const forecastData: ForecastWeatherData = await getForecastWeatherData(currentLocation.coords.latitude, currentLocation.coords.longitude);
+        setForecastWeatherData(forecastData);
       } catch (error) {
         console.error('Erro ao buscar dados climáticos:', error);
         setErrorMsg('Erro ao buscar dados climáticos.');
       } finally {
         setLoading(false);
       }
-    })();
+    };
+
+    fetchWeather();
   }, []);
 
-  console.log('Dados Climáticos:', weatherData);
-
+      //console.log(forecastWeatherData);
   return (
     <ImageBackground
-      source={require('../../assets/UIKIT/Noite.png')} // Caminho para sua imagem de fundo
+      source={background} // Caminho para sua imagem de fundo
       className="flex-1"
       resizeMode="cover"
     >
@@ -52,30 +103,14 @@ export default function Index() {
 
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         <Header />
+
         <View className="h-1/2 p-4">
-          {weatherData ? (
-            <>
-              <View className='flex flex-row w-full items-center justify-end bg-red-500 p-4 h-24'>
-                <View className='items-center justify-center bg-blue-500 h-full p-3'>
-                  <Text className="text-5xl text-white font-regular">{(weatherData.main.temp).toFixed(0)}°C</Text>
-
-                </View>
-                <View className='flex items-center justify-center bg-green-600 h-full'>
-
-                  <Text className="text-sm text-white font-light">Max {(weatherData.main.temp_max).toFixed(0)}</Text>
-                  <Text className="text-sm text-white font-light">Min {(weatherData.main.temp_min).toFixed(0)}</Text>
-
-                </View>
-                
-              </View>
-              
-                <Text className="text-4xl text-white font-bold">{weatherData.name}</Text>
-              <Text className="text-2xl text-white mt-2 capitalize">{weatherData.weather[0].description}</Text>
-              <Text className="text-xl text-white mt-2">Umidade: {weatherData.main.humidity}%</Text>
-            </>
-          ) : (
-            <ActivityIndicator size="large" color="#ffffff" />
-          )}
+          <Weather currentWeatherData={currentWeatherData} forecastWeatherData={forecastWeatherData} />
+        
+        </View>
+        <View className="h-1/2">
+          
+        <Card />
         </View>
 
       </ScrollView>
