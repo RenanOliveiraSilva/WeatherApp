@@ -1,6 +1,9 @@
-import { View, Text, ActivityIndicator, Image } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { CurrentWeatherData, ForecastWeatherData } from "@/services/api";
+import { getWeatherIcon } from '../GetIcon';
+import getWeatherImage from "../getImage";
+
 
 interface WeatherProps {
     currentWeatherData: CurrentWeatherData | null;
@@ -14,15 +17,22 @@ export default function Weather({ currentWeatherData, forecastWeatherData }: Wea
       }
 
       
+        // Obter as previsões diárias
+        const today = forecastWeatherData?.list[0];
+        // Obter a previsão para hoje (primeiro item)
+
+        if (!today) {
+            return <ActivityIndicator size="large" color="#ffffff" />
+        }
+
+        // Determinar o ícone apropriado usando a função getWeatherIcon
+        const weatherIcon = getWeatherIcon(today.weather[0]);
+        const weatherImage = getWeatherImage(today.weather[0]);
 
     return (
         <View className='flex flex-row  gap-3 justify-between items- mt-1 px-4'>
             <View className='flex flex-1 h-44 items-start justify-start'>
-            <Image 
-                source={require('../../assets/UIKIT/lua.png')}
-                resizeMode='contain'
-                className='h-25 w-25'
-            />
+            
             </View>
             <View className='flex flex-colw-2/3'>
                 <View className='flex flex-col w-full items-center justify-end p-4 h-44'>
@@ -45,7 +55,7 @@ export default function Weather({ currentWeatherData, forecastWeatherData }: Wea
 
                     </View>
                 
-
+                    <Ionicons name={weatherIcon} size={64} color="#ffffff" />
                 </View>
 
             </View>

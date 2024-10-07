@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text, ScrollView, ImageBackground, View } from "react-native";
 import { CurrentWeatherData, ForecastWeatherData, getCurrentWeatherData, getForecastWeatherData } from '../../services/api';
+
 import * as Location from "expo-location";
 
 
@@ -90,6 +91,8 @@ export default function Index() {
 
     fetchWeather();
   }, []);
+  
+
 
       //console.log(forecastWeatherData);
   return (
