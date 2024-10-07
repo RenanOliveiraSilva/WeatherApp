@@ -1,103 +1,22 @@
 // src/screens/Index.js
 import React, { useEffect, useState } from 'react';
-import { Text, ScrollView, ImageBackground, View } from "react-native";
-import { CurrentWeatherData, ForecastWeatherData, getCurrentWeatherData, getForecastWeatherData } from '../../services/api';
-
-import * as Location from "expo-location";
-
-
+import { Text, ScrollView, ImageBackground, View, ActivityIndicator, PermissionsAndroid, Platform, Image } from "react-native";
 import { Header } from "../Header/Header";
-import Weather from "../Weather";
-import Card from '../Card';
+import { Ionicons } from '@expo/vector-icons';
+import { WeatherData } from '@/services/api';
+import Weather from '../Weather/Weather';
 
 
 export default function Index() {
-  const [location, setLocation] = useState<Location.LocationObjectCoords | null>(null);
-  const [background, setBackground] = useState<any>(require('../../assets/UIKIT/Dia.png'));
-  const [currentWeatherData, setCurrentWeatherData] = useState<CurrentWeatherData | null>(null);
-  const [forecastWeatherData, setForecastWeatherData] = useState<ForecastWeatherData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    // Função para determinar se é manhã, tarde ou noite
-  const determineTimeOfDay = (currentTime: number, sunrise: number, sunset: number): 'morning' | 'afternoon' | 'night' => {
-    const currentDate = new Date(currentTime * 1000);
-    const hours = currentDate.getHours();
 
-    if (currentTime >= sunrise && currentTime < sunset) {
-      if (hours >= 12 && hours < 18) {
-        return 'afternoon';
-      }
-      return 'morning';
-    } else {
-      return 'night';
-    }
-  };
-
-  // Função para atualizar a imagem de fundo
-  const updateBackgroundImage = (data: CurrentWeatherData) => {
-    const currentTime = data.dt; // Horário atual em Unix
-    const sunrise = data.sys.sunrise;
-    const sunset = data.sys.sunset;
-
-    const timeOfDay = determineTimeOfDay(currentTime, sunrise, sunset);
-
-    switch (timeOfDay) {
-      case 'morning':
-        setBackground(require('../../assets/UIKIT/Dia.png')); // Imagem de manhã
-        break;
-      case 'afternoon':
-        setBackground(require('../../assets/UIKIT/Tarde.png')); // Imagem de tarde
-        break;
-      case 'night':
-        setBackground(require('../../assets/UIKIT/Noite.png')); // Imagem de noite
-        break;
-      
-    }
-  };
-
-  useEffect(() => {
-    const fetchWeather = async () => {
-      try {
-        // Solicitar permissões de localização
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          setErrorMsg('Permissão para acessar localização foi negada.');
-          setLoading(false);
-          return;
-        }
-
-        // Obter a localização atual
-        let currentLocation = await Location.getCurrentPositionAsync({});
-        setLocation(currentLocation.coords);
-
-        // Obter dados climáticos atuais
-        const currentData: CurrentWeatherData = await getCurrentWeatherData(currentLocation.coords.latitude, currentLocation.coords.longitude);
-        setCurrentWeatherData(currentData);
-
-        // Atualizar a imagem de fundo com base no horário
-        updateBackgroundImage(currentData);
-
-        // Obter dados de previsão de 3 horas
-        const forecastData: ForecastWeatherData = await getForecastWeatherData(currentLocation.coords.latitude, currentLocation.coords.longitude);
-        setForecastWeatherData(forecastData);
-      } catch (error) {
-        console.error('Erro ao buscar dados climáticos:', error);
-        setErrorMsg('Erro ao buscar dados climáticos.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWeather();
-  }, []);
   
+   
 
   console.log('Dados Climáticos:', weatherData);
 
   return (
     <ImageBackground
-      source={background} // Caminho para sua imagem de fundo
       source={require('../../assets/UIKIT/Noite.png')} // Caminho para sua imagem de fundo
       className="flex-1"
       resizeMode="cover"
@@ -107,14 +26,42 @@ export default function Index() {
 
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         <Header />
+        <View className="h-1/2 p-3 mr-2">
+          {weatherData ? (
+            <View className='flex flex-row mt-1 px-4'>
+              <View className='flex w-[130px] h-44 items-start justify-start'>
+                <Image 
+                  source={require('../../assets/UIKIT/lua.png')}
+                  resizeMode='contain'
+                  className='h-25 w-25'
+                />
+              </View>
+              <View className='flex flex-col flex-1'>
+                <View className='flex flex-col w-full items-center justify-end p-4 h-44'>
+                  <View className='flex flex-row'>
+                    <View className='items-center justify-center  h-full p-3'>
+                      <Text className="text-6xl text-white font-semibold">{(weatherData.main.temp).toFixed(0)}°C</Text>
 
-        <View className="h-1/2 p-4">
-          <Weather currentWeatherData={currentWeatherData} forecastWeatherData={forecastWeatherData} />
-        
-        </View>
-        <View className="h-1/2">
-          
-        <Card />
+                    </View>
+                    <View className='flex items-center justify-center h-full'>
+
+                      <Text className="text-sm text-white font-light">Max {(weatherData.main.temp_max).toFixed(0)}</Text>
+                      <Text className="text-sm text-white font-light">Min {(weatherData.main.temp_min).toFixed(0)}</Text>
+
+                    </View>
+
+                  </View>
+                  <Text className="text-md text-white font-light"><Ionicons name="location-sharp" size={15}/> {weatherData.name}, {weatherData.sys.country} </Text>
+                  <Text className="text-2xl text-white font-semibold capitalize">{weatherData.weather[0].description}</Text>
+
+                </View>
+
+              </View>
+                  
+            </View>
+          ) : (
+            <ActivityIndicator size="large" color="#ffffff" />
+          )}
         </View>
 
       </ScrollView>
