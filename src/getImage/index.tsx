@@ -1,3 +1,4 @@
+/*
 import React from 'react'
 import { Image } from 'react-native'
 
@@ -33,3 +34,4 @@ export default function getWeatherImage(weather: any) {
     />
   )
 }
+*/

@@ -63,6 +63,15 @@ export interface ForecastWeatherData {
     dt_txt: string;
   }>;
 }
+// Criando uma instância do Axios com configurações padrão
+const api = axios.create({
+  baseURL: "https://api.openweathermap.org/data/2.5/weather",
+  params: {
+    APPID: "MINHACHAVE",
+    units: 'metric', // Temperatura em Celsius
+    lang: 'pt', // Idioma em português
+  },
+});
 
 const API_KEY = '55d8bc5b1f9f8ee61e20577cd85ed5e3'; // Substitua pela sua chave real
 

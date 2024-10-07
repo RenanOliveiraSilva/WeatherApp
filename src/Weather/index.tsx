@@ -2,7 +2,7 @@ import { View, Text, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { CurrentWeatherData, ForecastWeatherData } from "@/services/api";
 import { getWeatherIcon } from '../GetIcon';
-import getWeatherImage from "../getImage";
+// import getWeatherImage from "../getImage";
 
 
 interface WeatherProps {
@@ -27,7 +27,7 @@ export default function Weather({ currentWeatherData, forecastWeatherData }: Wea
 
         // Determinar o ícone apropriado usando a função getWeatherIcon
         const weatherIcon = getWeatherIcon(today.weather[0]);
-        const weatherImage = getWeatherImage(today.weather[0]);
+        // const weatherImage = getWeatherImage(today.weather[0]);
 
     return (
         <View className='flex flex-row  gap-3 justify-between items- mt-1 px-4'>
