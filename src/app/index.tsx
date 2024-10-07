@@ -93,11 +93,12 @@ export default function Index() {
   }, []);
   
 
+  console.log('Dados Climáticos:', weatherData);
 
-      //console.log(forecastWeatherData);
   return (
     <ImageBackground
       source={background} // Caminho para sua imagem de fundo
+      source={require('../../assets/UIKIT/Noite.png')} // Caminho para sua imagem de fundo
       className="flex-1"
       resizeMode="cover"
     >
