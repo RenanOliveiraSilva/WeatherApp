@@ -4,6 +4,7 @@ import { CurrentWeatherData, ForecastWeatherData } from "@/services/api";
 import { getWeatherIcon } from '../GetIcon';
 import { getWeatherImage } from "../getImage";
 import Card from "../Card";
+import TemperatureLineChart from "../renderLine";
 
 
 interface WeatherProps {
@@ -83,7 +84,7 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
             </View>        
         </View>
          <View className="h-1/2 px-5">
-            
+         <TemperatureLineChart forecastWeatherData={forecastWeatherData}/>
          <Card forecastWeatherData={forecastWeatherData}/>
 
        </View>
