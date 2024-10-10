@@ -5,6 +5,7 @@ import { getWeatherIcon } from '../GetIcon';
 import { getWeatherImage } from "../getImage";
 import Card from "../Card";
 import TemperatureLineChart from "../renderLine";
+import { LinearGradient } from "expo-linear-gradient";
 
 
 interface WeatherProps {
@@ -83,11 +84,16 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
                 </View>
             </View>        
         </View>
-         <View className="h-1/2 px-5">
-         <TemperatureLineChart forecastWeatherData={forecastWeatherData}/>
-         <Card forecastWeatherData={forecastWeatherData}/>
-
-       </View>
+        <View className="flex-1 px-5">
+            {/* <TemperatureLineChart forecastWeatherData={forecastWeatherData}/> */}
+            <View className="flex-row items-center justify-start mb-1">
+                <Ionicons name="time-sharp" size={20} color={"gray"}/>
+                <Text className="ml-2 capitalize font-semibold text-gray-600 text-xl">
+                    Previsão por horário
+                </Text>
+            </View>
+            <Card forecastWeatherData={forecastWeatherData}/>
+        </View>
        </>
     );
 }

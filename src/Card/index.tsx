@@ -25,7 +25,7 @@ export default function Card({forecastWeatherData} : WeatherProps) {
         const mounth = date.getMonth();
 
         return (
-          <View className='flex flex-col text-center items-center justify-between p-2 mx-1 border rounded-lg h-40 w-32'>
+          <View className='flex flex-col text-center items-center justify-between p-2 h-40 w-28'>
             <Text>{ hours == 0 ? day + '/' +  mounth : hours + ":00"}</Text>
             <Image 
               source={{ uri: `http://openweathermap.org/img/wn/${weatherInfo.icon}@2x.png` }}

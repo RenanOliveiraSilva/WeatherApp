@@ -117,6 +117,7 @@ export default function Index() {
           
 
         </ScrollView>
+        
       </ImageBackground>
     </SafeAreaView>
   );
