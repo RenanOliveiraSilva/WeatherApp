@@ -1,14 +1,12 @@
 // src/screens/Index.js
 import React, { useEffect, useState } from 'react';
-import { Modal, ScrollView, ImageBackground, View, SafeAreaView } from "react-native";
+import { Modal, ScrollView, ImageBackground, View, SafeAreaView, Text } from "react-native";
 import { CurrentWeatherData, ForecastWeatherData, getCurrentWeatherData, getForecastWeatherData } from '../../services/api';
 import * as Location from "expo-location";
 
 
 import { Header } from "../Header/Header";
 import Weather from "../Weather";
-
-
 
 export default function Index() {
   const [location, setLocation] = useState<Location.LocationObjectCoords | null>(null);
@@ -17,8 +15,7 @@ export default function Index() {
   const [forecastWeatherData, setForecastWeatherData] = useState<ForecastWeatherData | null>(null);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'night'>('morning');
-  const [loading, setLoading] = useState<boolean>(true);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
 
 
     // Função para determinar se é manhã, tarde ou noite
@@ -67,9 +64,8 @@ export default function Index() {
         // Solicitar permissões de localização
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-          setErrorMsg('Permissão para acessar localização foi negada.');
-          setLoading(false);
-          return;
+          
+          return <Text>Permissão para acessar localização foi negada.</Text>;;
         }
 
         // Obter a localização atual
@@ -88,9 +84,9 @@ export default function Index() {
         setForecastWeatherData(forecastData);
       } catch (error) {
         console.error('Erro ao buscar dados climáticos:', error);
-        setErrorMsg('Erro ao buscar dados climáticos.');
+       
       } finally {
-        setLoading(false);
+        
       }
     };
 
@@ -111,11 +107,8 @@ export default function Index() {
           <Header 
             timeOfDay={timeOfDay}
           />
-
           <Weather currentWeatherData={currentWeatherData} forecastWeatherData={forecastWeatherData} currentTime={currentTime} />
           
-          
-
         </ScrollView>
         
       </ImageBackground>

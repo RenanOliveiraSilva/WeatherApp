@@ -4,8 +4,6 @@ import { CurrentWeatherData, ForecastWeatherData } from "@/services/api";
 import { getWeatherIcon } from '../GetIcon';
 import { getWeatherImage } from "../getImage";
 import Card from "../Card";
-import TemperatureLineChart from "../renderLine";
-import { LinearGradient } from "expo-linear-gradient";
 
 
 interface WeatherProps {
@@ -19,7 +17,6 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
       if(!currentWeatherData) {
         return <ActivityIndicator size="large" color="#ffffff" />
       }
-
       
         // Obter as previsões diárias
         const today = forecastWeatherData?.list[0];
@@ -85,7 +82,6 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
             </View>        
         </View>
         <View className="flex-1 px-5">
-            {/* <TemperatureLineChart forecastWeatherData={forecastWeatherData}/> */}
             <View className="flex-row items-center justify-start mb-1">
                 <Ionicons name="time-sharp" size={20} color={"gray"}/>
                 <Text className="ml-2 capitalize font-semibold text-gray-600 text-xl">
