@@ -1,24 +1,20 @@
-// src/screens/Index.js
-import React, { useEffect, useState } from 'react';
-import { Modal, ScrollView, ImageBackground, View, SafeAreaView, Text } from "react-native";
+import React, { useCallback, useEffect, useState } from 'react';
+import { Modal, ScrollView, ImageBackground, View, SafeAreaView, Text, ActivityIndicator } from "react-native";
 import { CurrentWeatherData, ForecastWeatherData, getCurrentWeatherData, getForecastWeatherData } from '../../services/api';
 import * as Location from "expo-location";
-
-
 import { Header } from "../Header/Header";
 import Weather from "../Weather";
 
 export default function Index() {
   const [location, setLocation] = useState<Location.LocationObjectCoords | null>(null);
+  const [currentLocation, setcurrentLocation] = useState<Location.LocationObjectCoords | null>(null);
   const [background, setBackground] = useState<any>(require('../../assets/UIKIT/Dia.png'));
   const [currentWeatherData, setCurrentWeatherData] = useState<CurrentWeatherData | null>(null);
   const [forecastWeatherData, setForecastWeatherData] = useState<ForecastWeatherData | null>(null);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'night'>('morning');
 
-
-
-    // Função para determinar se é manhã, tarde ou noite
+  // Função para determinar se é manhã, tarde ou noite
   const determineTimeOfDay = (currentTime: number, sunrise: number, sunset: number): 'morning' | 'afternoon' | 'night' => {
     const currentDate = new Date(currentTime * 1000);
     const hours = currentDate.getHours();
@@ -54,45 +50,73 @@ export default function Index() {
       case 'night':
         setBackground(require('../../assets/UIKIT/Noite.png')); // Imagem de noite
         break;
+    }
+  };
+
+  // Função para buscar a localização atual do usuário
+  const fetchCurrentLocation = async () => {
+    try {
+      // Solicitar permissões de localização
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        return <Text>Permissão para acessar localização foi negada.</Text>
+      }
+
+      // Obter a localização atual
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation.coords);
+      setcurrentLocation(currentLocation.coords);
+    } catch (error) {
+      console.error('Erro ao obter localização:', error);
       
     }
   };
 
+  // Função para buscar os dados climáticos
+  const fetchWeatherData = useCallback(async () => {
+    if (!location) return <ActivityIndicator size="large" color="#ffffff" />;
+
+    try {
+      // Obter dados climáticos atuais
+      const currentData: CurrentWeatherData = await getCurrentWeatherData(location.latitude, location.longitude);
+      setCurrentWeatherData(currentData);
+
+      // Atualizar a imagem de fundo com base no horário
+      updateBackgroundImage(currentData);
+
+      // Obter dados de previsão de 3 horas
+      const forecastData: ForecastWeatherData = await getForecastWeatherData(location.latitude, location.longitude);
+      setForecastWeatherData(forecastData);
+    } catch (error) {
+      console.error('Erro ao buscar dados climáticos:', error);
+     
+    } finally {
+      
+    }
+  }, [location]);
+
+  // useEffect para buscar a localização atual ao montar o componente
   useEffect(() => {
-    const fetchWeather = async () => {
-      try {
-        // Solicitar permissões de localização
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          
-          return <Text>Permissão para acessar localização foi negada.</Text>;;
-        }
-
-        // Obter a localização atual
-        let currentLocation = await Location.getCurrentPositionAsync({});
-        setLocation(currentLocation.coords);
-
-        // Obter dados climáticos atuais
-        const currentData: CurrentWeatherData = await getCurrentWeatherData(currentLocation.coords.latitude, currentLocation.coords.longitude);
-        setCurrentWeatherData(currentData);
-
-        // Atualizar a imagem de fundo com base no horário
-        updateBackgroundImage(currentData);
-
-        // Obter dados de previsão de 3 horas
-        const forecastData: ForecastWeatherData = await getForecastWeatherData(currentLocation.coords.latitude, currentLocation.coords.longitude);
-        setForecastWeatherData(forecastData);
-      } catch (error) {
-        console.error('Erro ao buscar dados climáticos:', error);
-       
-      } finally {
-        
-      }
-    };
-
-    fetchWeather();
+    fetchCurrentLocation();
   }, []);
-  
+
+  // useEffect para buscar os dados climáticos sempre que a localização mudar
+  useEffect(() => {
+    fetchWeatherData();
+  }, [fetchWeatherData]);
+
+  const handleLocationSelected = (lat: number, lon: number) => {
+    setLocation({ 
+      latitude: lat, 
+      longitude: lon, 
+      altitude: 0, 
+      accuracy: 0, 
+      altitudeAccuracy: 0, 
+      heading: 0, 
+      speed: 0 
+    });
+  };
+
   return (
     <SafeAreaView className='flex-1'>
       <ImageBackground
@@ -106,8 +130,10 @@ export default function Index() {
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
           <Header 
             timeOfDay={timeOfDay}
+            onLocationSelected={handleLocationSelected}
+            currentLocation={currentLocation}
           />
-          <Weather currentWeatherData={currentWeatherData} forecastWeatherData={forecastWeatherData} currentTime={currentTime} />
+          <Weather currentWeatherData={currentWeatherData} forecastWeatherData={forecastWeatherData} currentTime={currentTime} timeOfDay={timeOfDay}/>
           
         </ScrollView>
         

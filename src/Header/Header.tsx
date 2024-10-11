@@ -2,14 +2,31 @@ import { Pressable, View, Modal, TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import { useState } from "react";
+import ModalLocation from "../Modal";
+import { LocationObjectCoords } from "expo-location";
 
 interface HeaderProps {
     timeOfDay: 'morning' | 'afternoon' | 'night';
+    onLocationSelected : (lat: number, lon: number, name: string) => void;
+    currentLocation: LocationObjectCoords | null;
+    
 }
 
-export function Header({ timeOfDay }: HeaderProps) {
-    const [openModal, setOpenModal] = useState(false);
+export function Header({ timeOfDay, onLocationSelected, currentLocation  }: HeaderProps) {
     const statusBarHeight = Constants.statusBarHeight;
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    if (!currentLocation) {
+        return;
+    }
+
+    function openModal() {
+        setIsModalOpen(true);
+    }
+
+    function closeModal() {
+        setIsModalOpen(false);
+    }
 
     function colorOfStatusBar(){
         if (timeOfDay === 'morning') {
@@ -20,52 +37,28 @@ export function Header({ timeOfDay }: HeaderProps) {
     
         } 
 
-        console.log(timeOfDay);
         return '#543BA0';
         
     }
 
     const color = colorOfStatusBar();
 
-
-
     return (
         <>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={openModal}
-                onRequestClose={() => setOpenModal(false)} // Fecha o modal quando o usuário pressiona o botão de voltar no Android
-            >
-                <View className="flex-1 justify-center items-center bg-black/75">
-                    <View className="bg-white rounded-lg w-11/12 p-5">
-                        {/* Cabeçalho do Modal */}
-                        <View className="flex-row justify-between items-center mb-4">
-                            <Text className="text-lg font-semibold">Detalhes da Localização</Text>
-                            <TouchableOpacity 
-                                onPress={() => setOpenModal(false)} 
-                                accessible={true} 
-                                accessibilityLabel="Fechar modal"
-                            >
-                                <Ionicons name="close-circle" size={28} color="gray" />
-                            </TouchableOpacity>
-                        </View>
-
-                        {/* Conteúdo do Modal */}
-                        <Text className="mb-4">Aqui você pode exibir informações adicionais sobre a localização.</Text>
-                        
-                        {/* Exemplo de conteúdo adicional */}
-                        <Text className="mb-4">Latitude: -23.5505</Text>
-                        <Text className="mb-4">Longitude: -46.6333</Text>
-
-                    </View>
-                </View>
-            </Modal>
             <View style= {{ height: statusBarHeight + 4, backgroundColor: color}} />
             <View className="flex w-full mt-1 justify-end items-end pr-5">
-                <Pressable onPress={() => setOpenModal(true)}>
-                        <Ionicons name="location-sharp" size={30} color="white"/>
+                <Pressable onPress={() => openModal()}>
+                        <Ionicons name="earth-sharp" size={30} color="white"/>
                 </Pressable>
+                
+                {isModalOpen && 
+                     <ModalLocation 
+                     closeModal={closeModal} 
+                     onSelectLocation={(location) => {
+                         onLocationSelected(location.lat, location.lon, location.name);
+                     }} 
+                     currentLocation={currentLocation}  // Passando a prop corretamente
+                 />}
             </View>
         
         </>

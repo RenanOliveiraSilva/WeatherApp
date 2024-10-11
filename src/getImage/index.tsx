@@ -23,6 +23,6 @@ export function getWeatherImage(id: number, currentTime: number) {
     } else if (id > 800 && id < 900) {
         image = require('../../assets/UIKIT/Nublado.png'); // Clouds (Nuvens)
     }
-    console.log(hours);
+
     return image;
 }

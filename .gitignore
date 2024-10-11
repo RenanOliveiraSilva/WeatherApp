@@ -20,8 +20,4 @@ expo-env.d.ts
 # @end expo-cli
 
 assets/UIKIT
-<<<<<<< HEAD
 .env
-=======
-services
->>>>>>> bbf431f5945bbf3bd0b3e87ffa29e2f028ab2a62

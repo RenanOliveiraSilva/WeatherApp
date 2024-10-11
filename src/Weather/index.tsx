@@ -1,7 +1,7 @@
 import { View, Text, ActivityIndicator, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { CurrentWeatherData, ForecastWeatherData } from "@/services/api";
-import { getWeatherIcon } from '../GetIcon';
+import { getWindDirection } from "../getWind";
 import { getWeatherImage } from "../getImage";
 import Card from "../Card";
 
@@ -10,14 +10,29 @@ interface WeatherProps {
     currentWeatherData: CurrentWeatherData | null;
     forecastWeatherData: ForecastWeatherData | null;
     currentTime: number;
+    timeOfDay: 'morning' | 'afternoon' | 'night' | null;
   }
 
-export default function Weather({ currentWeatherData, forecastWeatherData, currentTime }: WeatherProps) {
+export default function Weather({ currentWeatherData, forecastWeatherData, currentTime, timeOfDay }: WeatherProps) {
     
       if(!currentWeatherData) {
-        return <ActivityIndicator size="large" color="#ffffff" />
+        return <ActivityIndicator size="large" color="white" />
       }
       
+      function color(opacity =0.20){
+        const hexOpacity = Math.round(opacity * 255).toString(16).padStart(2, '0');
+        if (timeOfDay === 'morning') {
+        return '#8BA9DF'+hexOpacity;
+    
+        } else if (timeOfDay === 'afternoon') {
+            return '#E0928C'+hexOpacity;
+    
+        } 
+
+        return '#543BA0'+hexOpacity;
+        
+    }
+
         // Obter as previsões diárias
         const today = forecastWeatherData?.list[0];
         // Obter a previsão para hoje (primeiro item)
@@ -27,7 +42,7 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
         }
 
         // Determinar o ícone apropriado usando a função getWeatherIcon
-        const weatherIcon = getWeatherIcon(today.weather[0]);
+        const windDirecton = getWindDirection(today.wind.deg);
         // Obter a imagem de acordo com o clima atual
         const image = getWeatherImage(currentWeatherData.weather[0].id, currentTime);
         console.log(currentWeatherData);
@@ -69,7 +84,7 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
                         </View>
                         <View className='flex items-end justify-end w-full '>
                             <Text className="text-lg text-white text-center font-light">
-                                <Ionicons name="pin-sharp" size={15}/> {currentWeatherData.name}, {currentWeatherData.sys.country} 
+                                <Ionicons name="location-sharp" size={15}/> {currentWeatherData.name}, {currentWeatherData.sys.country} 
                             </Text>
                             <Text className="text-lg text-white font-bold capitalize">
                                 {currentWeatherData.weather[0].description}
@@ -82,13 +97,31 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
             </View>        
         </View>
         <View className="flex-1 px-5">
-            <View className="flex-row items-center justify-start mb-1">
-                <Ionicons name="time-sharp" size={20} color={"gray"}/>
-                <Text className="ml-2 capitalize font-semibold text-gray-600 text-xl">
-                    Previsão por horário
-                </Text>
+            <View className="px-4 py-2 rounded-xl" style={{backgroundColor: color()}}>
+                <View className="flex-row items-center justify-start mb-1">
+                    <Ionicons name="time-sharp" size={20} color={"gray"}/>
+                    <Text className="ml-2 capitalize font-semibold text-gray-600 text-lg">
+                        Previsão por horário
+                    </Text>
+                </View>
+                <Card forecastWeatherData={forecastWeatherData}/>
+
             </View>
-            <Card forecastWeatherData={forecastWeatherData}/>
+            <View className="flex w-full h-fit mt-4">
+                <View className="w-1/2" style={{backgroundColor: color()}}>
+                    <View className="flex-row items-center justify-start p-2">
+                        <Ionicons name="umbrella-sharp" size={20} color={"gray"}/>
+                        <Text className="ml-2 capitalize font-semibold text-gray-600 text-lg">
+                            Umidade
+                        </Text>
+                    </View>
+                    <View className="flex-row items-center justify-center p-2">
+                        <Text className="text-lg text-white font-semibold">
+                            {windDirecton}
+                        </Text>
+                    </View>
+                </View>
+            </View>
         </View>
        </>
     );
