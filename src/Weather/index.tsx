@@ -10,28 +10,31 @@ interface WeatherProps {
     currentWeatherData: CurrentWeatherData | null;
     forecastWeatherData: ForecastWeatherData | null;
     currentTime: number;
-    timeOfDay: 'morning' | 'afternoon' | 'night' | null;
+    timeOfDay: 'morning' | 'afternoon' | 'night' | 'rain' | null;
   }
 
 export default function Weather({ currentWeatherData, forecastWeatherData, currentTime, timeOfDay }: WeatherProps) {
     
-      if(!currentWeatherData) {
-        return <ActivityIndicator size="large" color="white" />
-      }
+        if(!currentWeatherData) {
+            return <ActivityIndicator size="large" color="white" />
+        }
       
-      function color(opacity =0.20){
-        const hexOpacity = Math.round(opacity * 255).toString(16).padStart(2, '0');
-        if (timeOfDay === 'morning') {
-        return '#8BA9DF'+hexOpacity;
-    
-        } else if (timeOfDay === 'afternoon') {
-            return '#E0928C'+hexOpacity;
-    
-        } 
+        function color(opacity =0.20){
+            const hexOpacity = Math.round(opacity * 255).toString(16).padStart(2, '0');
 
-        return '#543BA0'+hexOpacity;
+            if (timeOfDay === 'rain') { return '#0D192B'+hexOpacity; }
+            
+            if (timeOfDay === 'morning') {
+            return '#8BA9DF'+hexOpacity;
         
-    }
+            } else if (timeOfDay === 'afternoon') {
+                return '#E0928C'+hexOpacity;
+        
+            } 
+
+            return '#543BA0'+hexOpacity;
+        
+        }
 
         // Obter as previsões diárias
         const today = forecastWeatherData?.list[0];
@@ -45,7 +48,6 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
         const windDirecton = getWindDirection(today.wind.deg);
         // Obter a imagem de acordo com o clima atual
         const image = getWeatherImage(currentWeatherData.weather[0].id, currentTime);
-        console.log(currentWeatherData);
 
         // Temperatura máxima e miníma
         const maxTemp = today.main.temp_max;
@@ -59,7 +61,7 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
                     <Image 
                         source={image}
                         resizeMode='contain'
-                        className='h-full w-full'
+                        className='h-full w-full z-10'
                         accessibilityLabel="Imagem representando a condição climática atual"
                     />
                 </View>

@@ -12,7 +12,12 @@ export default function Index() {
   const [currentWeatherData, setCurrentWeatherData] = useState<CurrentWeatherData | null>(null);
   const [forecastWeatherData, setForecastWeatherData] = useState<ForecastWeatherData | null>(null);
   const [currentTime, setCurrentTime] = useState<number>(0);
-  const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'night'>('morning');
+  const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'night' | 'rain'>('morning');
+
+  if(!currentWeatherData) {
+    return <ActivityIndicator size="large" color="white" />
+  }
+
 
   // Função para determinar se é manhã, tarde ou noite
   const determineTimeOfDay = (currentTime: number, sunrise: number, sunset: number): 'morning' | 'afternoon' | 'night' => {
@@ -23,7 +28,9 @@ export default function Index() {
       if (hours >= 12 && hours < 18) {
         return 'afternoon';
       }
+
       return 'morning';
+      
     } else {
       return 'night';
     }
@@ -36,9 +43,20 @@ export default function Index() {
     const sunset = data.sys.sunset;
 
     setCurrentTime(currentTime);
+    // Verificar se o clima atual é chuvoso
+    if(!currentWeatherData) {
+      return <ActivityIndicator size="large" color="white" />
+    }
+
+    setTimeOfDay("rain");
+
+    if(data.weather[0].id >= 200 && data.weather[0].id< 600) return setBackground(require('../../assets/UIKIT/ChuvaC.png'));
+
     const timeOfDay = determineTimeOfDay(currentTime, sunrise, sunset);
 
     setTimeOfDay(timeOfDay);
+    
+    console.log(data.weather[0].id);
 
     switch (timeOfDay) {
       case 'morning':

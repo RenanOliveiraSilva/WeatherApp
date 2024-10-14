@@ -1,6 +1,6 @@
 import { ForecastWeatherData } from '@/services/api';
 import React from 'react'
-import { Text, View, ScrollView, FlatList, Image } from 'react-native'
+import { Text, View, FlatList, Image } from 'react-native'
 
 interface WeatherProps {
   forecastWeatherData: ForecastWeatherData | null;

@@ -18,7 +18,7 @@ interface ModalLocationProps {
       currentLocation: LocationObjectCoords | null;
 }
 
-const API_KEY = 'MINHACHAVE';
+const API_KEY = '55d8bc5b1f9f8ee61e20577cd85ed5e3';
 
 export default function ModalLocation({closeModal, onSelectLocation, currentLocation}: ModalLocationProps) {
     const [query, setQuery] = useState('');

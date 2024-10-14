@@ -6,7 +6,7 @@ import ModalLocation from "../Modal";
 import { LocationObjectCoords } from "expo-location";
 
 interface HeaderProps {
-    timeOfDay: 'morning' | 'afternoon' | 'night';
+    timeOfDay: 'morning' | 'afternoon' | 'night' | 'rain';
     onLocationSelected : (lat: number, lon: number, name: string) => void;
     currentLocation: LocationObjectCoords | null;
     
@@ -29,6 +29,10 @@ export function Header({ timeOfDay, onLocationSelected, currentLocation  }: Head
     }
 
     function colorOfStatusBar(){
+        if (timeOfDay === 'rain') {
+            return '#0D192B';
+        }
+
         if (timeOfDay === 'morning') {
         return '#8BA9DF';
     
