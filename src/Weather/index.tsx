@@ -52,6 +52,7 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
         // Temperatura máxima e miníma
         const maxTemp = today.main.temp_max;
         const minTemp = today.main.temp_min;
+        
     return (
         <>
         <View className="h-1/2 px-4">
