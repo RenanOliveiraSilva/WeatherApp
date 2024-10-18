@@ -1,19 +1,19 @@
 export function getWindDirection(deg: number) {
   if (deg >= 337.5 || deg < 22.5) {
-    return 'N'; // Norte
+    return 'Norte'; // Norte
   } else if (deg >= 22.5 && deg < 67.5) {
-    return 'NE'; // Nordeste
+    return 'Nordeste'; // Nordeste
   } else if (deg >= 67.5 && deg < 112.5) {
-    return 'E'; // Leste
+    return 'Leste'; // Leste
   } else if (deg >= 112.5 && deg < 157.5) {
-    return 'SE'; // Sudeste
+    return 'Sudeste'; // Sudeste
   } else if (deg >= 157.5 && deg < 202.5) {
-    return 'S'; // Sul
+    return 'Sul'; // Sul
   } else if (deg >= 202.5 && deg < 247.5) {
-    return 'SW'; // Sudoeste
+    return 'Sudoeste'; // Sudoeste
   } else if (deg >= 247.5 && deg < 292.5) {
-    return 'W'; // Oeste
+    return 'Oeste'; // Oeste
   } else if (deg >= 292.5 && deg < 337.5) {
-    return 'NW'; // Noroeste
+    return 'Noroeste'; // Noroeste
   }
 }

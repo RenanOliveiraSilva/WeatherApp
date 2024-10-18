@@ -19,11 +19,14 @@
       }
     },
     "android": {
-      "permissions": ["ACCESS_FINE_LOCATION"],
+      "permissions": [
+        "ACCESS_FINE_LOCATION"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.renanos147.WeatherApp"
     },
     "web": {
       "bundler": "metro",
@@ -35,6 +38,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1929328a-c0ec-4ddb-bba4-6d12f16a9870"
+      }
     }
   }
 }

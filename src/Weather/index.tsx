@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator, Image } from "react-native";
+import { View, Text, ActivityIndicator, Image, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { CurrentWeatherData, ForecastWeatherData } from "@/services/api";
 import { getWindDirection } from "../getWind";
@@ -45,7 +45,7 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
         }
 
         // Determinar o ícone apropriado usando a função getWeatherIcon
-        const windDirecton = getWindDirection(today.wind.deg);
+        const windDirection = getWindDirection(today.wind.deg);
         // Obter a imagem de acordo com o clima atual
         const image = getWeatherImage(currentWeatherData.weather[0].id, currentTime);
 
@@ -86,9 +86,15 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
                             </View>
                         </View>
                         <View className='flex items-end justify-end w-full '>
-                            <Text className="text-lg text-white text-center font-light">
-                                <Ionicons name="location-sharp" size={15}/> {currentWeatherData.name}, {currentWeatherData.sys.country} 
-                            </Text>
+                            {currentWeatherData.name.length < 20 ? 
+                                <Text className="text-lg text-white text-center font-light">
+                                    <Ionicons name="location-sharp" size={12}/> {currentWeatherData.name}, {currentWeatherData.sys.country} 
+                                </Text>
+                            : 
+                                <Text className="text-sm text-white text-center font-light">
+                                    <Ionicons name="location-sharp" size={15}/> {currentWeatherData.name}, {currentWeatherData.sys.country} 
+                                </Text>
+                            }
                             <Text className="text-lg text-white font-bold capitalize">
                                 {currentWeatherData.weather[0].description}
                             </Text>
@@ -99,7 +105,7 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
                 </View>
             </View>        
         </View>
-        <View className="flex-1 px-5">
+        <ScrollView className="flex-1 px-5">
             <View className="px-4 py-2 rounded-xl" style={{backgroundColor: color()}}>
                 <View className="flex-row items-center justify-start mb-1">
                     <Ionicons name="time-sharp" size={20} color={"gray"}/>
@@ -110,22 +116,163 @@ export default function Weather({ currentWeatherData, forecastWeatherData, curre
                 <Card forecastWeatherData={forecastWeatherData}/>
 
             </View>
-            <View className="flex w-full h-fit mt-4">
-                <View className="w-1/2" style={{backgroundColor: color()}}>
-                    <View className="flex-row items-center justify-start p-2">
-                        <Ionicons name="umbrella-sharp" size={20} color={"gray"}/>
-                        <Text className="ml-2 capitalize font-semibold text-gray-600 text-lg">
-                            Umidade
+                
+            <View className="flex-row space-y-2 h-full items-center mt-4 justify-between">
+
+                <View className="flex flex-col flex-[0.48] h-full">
+                    <View className="flex-[0.48] flex flex-row p-3 justify-between rounded-xl" style={{ backgroundColor: color() }}>
+                        <View className="flex-col w-1/2 justify-center items-start">
+                        <Text className="text-lg justify-center text-gray-600 font-semibold">
+                            {windDirection}
                         </Text>
+                        <Text className="text-md justify-center text-gray-600 font-semibold">
+                            {currentWeatherData.wind.speed.toFixed(2)} Km/h
+                        </Text>
+                        </View>
+                        <View className="flex-row flex-1 items-center justify-center p-2 relative">
+                        <Image 
+                            source={require('../../assets/UIKIT/bulssolaEs.png')}
+                            resizeMode='contain'
+                            className='h-20 w-20'
+                            accessibilityLabel="Imagem representando a condição climática atual"
+                        />
+                        <Image 
+                            source={require('../../assets/UIKIT/ponteiro.png')}
+                            resizeMode='contain'
+                            className='h-9 w-9 absolute'
+                            style={{ 
+                            top: '78%', 
+                            left: '79%', 
+                            transform: [
+                                { translateX: -28 },
+                                { translateY: -28 },
+                                { 
+                                rotate: windDirection === "Norte"
+                                ? '90deg'
+                                : windDirection === "Nordeste"
+                                ? '135deg'
+                                : windDirection === "Leste"
+                                ? '180deg'
+                                : windDirection === "Sudeste"
+                                ? '225deg'
+                                : windDirection === "Sul"
+                                ? '270deg'
+                                : windDirection === 'Sudoeste'
+                                ? '315deg'
+                                : windDirection === 'Oeste'
+                                ? '0deg'
+                                : '45deg'
+                                }]
+                            }}
+                            accessibilityLabel="Imagem representando a condição climática atual"
+                        />
+                        </View>
                     </View>
-                    <View className="flex-row items-center justify-center p-2">
-                        <Text className="text-lg text-white font-semibold">
-                            {windDirecton}
+
+                    <View className="flex-[0.48] flex flex-row p-3 justify-between rounded-xl" style={{ backgroundColor: color() }}>
+                        <View className="flex-col w-1/2 justify-center items-start">
+                        <Text className="text-lg justify-center text-gray-600 font-semibold">
+                            {windDirection}
                         </Text>
+                        <Text className="text-md justify-center text-gray-600 font-semibold">
+                            {currentWeatherData.wind.speed.toFixed(2)} Km/h
+                        </Text>
+                        </View>
+                        <View className="flex-row flex-1 items-center justify-center p-2 relative">
+                        <Image 
+                            source={require('../../assets/UIKIT/bulssolaEs.png')}
+                            resizeMode='contain'
+                            className='h-20 w-20'
+                            accessibilityLabel="Imagem representando a condição climática atual"
+                        />
+                        <Image 
+                            source={require('../../assets/UIKIT/ponteiro.png')}
+                            resizeMode='contain'
+                            className='h-9 w-9 absolute'
+                            style={{ 
+                            top: '78%', 
+                            left: '79%', 
+                            transform: [
+                                { translateX: -28 },
+                                { translateY: -28 },
+                                { 
+                                rotate: windDirection === "Norte"
+                                ? '90deg'
+                                : windDirection === "Nordeste"
+                                ? '135deg'
+                                : windDirection === "Leste"
+                                ? '180deg'
+                                : windDirection === "Sudeste"
+                                ? '225deg'
+                                : windDirection === "Sul"
+                                ? '270deg'
+                                : windDirection === 'Sudoeste'
+                                ? '315deg'
+                                : windDirection === 'Oeste'
+                                ? '0deg'
+                                : '45deg'
+                                }]
+                            }}
+                            accessibilityLabel="Imagem representando a condição climática atual"
+                        />
+                        </View>
                     </View>
                 </View>
+                
+
+                <View className="flex-[0.48] flex flex-row p-3 justify-between rounded-xl" style={{ backgroundColor: color() }}>
+                    <View className="flex-col w-1/2 justify-center items-start">
+                    <Text className="text-lg justify-center text-gray-600 font-semibold">
+                        {windDirection}
+                    </Text>
+                    <Text className="text-md justify-center text-gray-600 font-semibold">
+                        {currentWeatherData.wind.speed.toFixed(2)} Km/h
+                    </Text>
+                    </View>
+                    <View className="flex-row flex-1 items-center justify-center p-2 relative">
+                    <Image 
+                        source={require('../../assets/UIKIT/bulssolaEs.png')}
+                        resizeMode='contain'
+                        className='h-20 w-20'
+                        accessibilityLabel="Imagem representando a condição climática atual"
+                    />
+                    <Image 
+                        source={require('../../assets/UIKIT/ponteiro.png')}
+                        resizeMode='contain'
+                        className='h-9 w-9 absolute'
+                        style={{ 
+                        top: '77%', 
+                        left: '73%', 
+                        transform: [
+                            { translateX: -28 },
+                            { translateY: -28 },
+                            { 
+                            rotate: windDirection === "Norte"
+                            ? '90deg'
+                            : windDirection === "Nordeste"
+                            ? '135deg'
+                            : windDirection === "Leste"
+                            ? '180deg'
+                            : windDirection === "Sudeste"
+                            ? '225deg'
+                            : windDirection === "Sul"
+                            ? '270deg'
+                            : windDirection === 'Sudoeste'
+                            ? '315deg'
+                            : windDirection === 'Oeste'
+                            ? '0deg'
+                            : '45deg'
+                            }]
+                        }}
+                        accessibilityLabel="Imagem representando a condição climática atual"
+                    />
+                    </View>
+                </View>
+
+                
             </View>
-        </View>
+            
+        </ScrollView>
        </>
     );
 }
