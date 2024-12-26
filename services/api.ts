@@ -64,7 +64,7 @@ export interface ForecastWeatherData {
   }>;
 }
 // Criando uma instância do Axios com configurações padrão
-const API_KEY = '55d8bc5b1f9f8ee61e20577cd85ed5e3'; // Substitua pela sua chave real
+const API_KEY = 'SUACHAVEAQUI'; // Substitua pela sua chave real
 
 // Função para obter o clima atual
 export const getCurrentWeatherData = async (latitude: number, longitude: number): Promise<CurrentWeatherData> => {

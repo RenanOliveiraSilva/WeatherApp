@@ -18,7 +18,7 @@ interface ModalLocationProps {
       currentLocation: LocationObjectCoords | null;
 }
 
-const API_KEY = '55d8bc5b1f9f8ee61e20577cd85ed5e3';
+const API_KEY = 'SUACHAVEAQUI';
 
 export default function ModalLocation({closeModal, onSelectLocation, currentLocation}: ModalLocationProps) {
     const [query, setQuery] = useState('');
@@ -36,7 +36,7 @@ export default function ModalLocation({closeModal, onSelectLocation, currentLoca
     }
     setLoading(true);
     try {
-      const response = await axios.get(`http://api.openweathermap.org/geo/1.0/direct`, {
+      const response = await axios.get(`https://api.openweathermap.org/geo/1.0/direct`, {
         params: {
           q: text,
           limit: 5,
@@ -122,24 +122,23 @@ export default function ModalLocation({closeModal, onSelectLocation, currentLoca
               )}
               style={{ marginTop: 20 }}
             />
-          )}
+          )}  
+          <View className="flex w-full justify-center items-center">
                     <TouchableOpacity
                         onPress={handleUseCurrentLocation}
                         activeOpacity={0.7}
-                        className="rounded-md shadow-md w-fit"
+                        className="rounded-md shadow-md bg-black py-2 px-4 flex-row items-center justify-center w-fit"
                         accessibilityRole="button"
                         accessibilityLabel="Usar localização atual"
                     >
-                    <View className="flex-row items-center justify-center">
-                        <View className="bg-black py-2 px-4 items-center justify-center flex-row rounded-md">
-                            <Ionicons name="locate-sharp" size={16} color="white" className="mr-2" />
-                            <Text className="text-white text-lg font-semibold text-center">Usar localização atual</Text>
-
-                        </View>
-                    </View>
+                        
+                                <Ionicons name="locate-sharp" size={16} color="white" style={{ marginRight: 8 }} />
+                                <Text className="text-white text-lg font-semibold text-center">
+                                    Usar localização atual
+                                </Text>
+                            
                     </TouchableOpacity>
-
-
+            </View>
                 </View>
             </View>
         </Modal>

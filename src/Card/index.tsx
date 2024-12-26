@@ -28,8 +28,8 @@ export default function Card({forecastWeatherData} : WeatherProps) {
           <View className='flex flex-col text-center items-center justify-between p-2 h-40 w-28'>
             <Text>{ hours == 0 ? day + '/' +  mounth : hours + ":00"}</Text>
             <Image 
-              source={{ uri: `http://openweathermap.org/img/wn/${weatherInfo.icon}@2x.png` }}
-              style={{ width: 50, height: 50 }}
+              source={{ uri: `https://openweathermap.org/img/wn/${weatherInfo.icon}@2x.png` }}
+              style={{ width: 50, height: 50, resizeMode: 'contain' }}
             />
             <Text>{(item.main.temp).toFixed(1)}°C</Text>
             <View className="h-12 w-full flex items-center justify-center">

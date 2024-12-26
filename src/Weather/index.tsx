@@ -4,6 +4,7 @@ import { CurrentWeatherData, ForecastWeatherData } from "@/services/api";
 import { getWindDirection } from "../getWind";
 import { getWeatherImage } from "../getImage";
 import Card from "../Card";
+import React from "react";
 
 
 interface WeatherProps {

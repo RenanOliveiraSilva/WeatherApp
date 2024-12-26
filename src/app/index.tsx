@@ -124,7 +124,7 @@ export default function Index() {
   return (
     <SafeAreaView className='flex-1'>
       <ImageBackground source={background} className="flex-1" resizeMode="cover">
-        <View className="absolute inset-0 bg-black opacity-30" />
+        <View className="absolute inset-0 bg-black opacity-10" />
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
           <Header timeOfDay={timeOfDay} onLocationSelected={handleLocationSelected} currentLocation={currentLocation} />
           <Weather currentWeatherData={currentWeatherData} forecastWeatherData={forecastWeatherData} currentTime={currentTime} timeOfDay={timeOfDay} />

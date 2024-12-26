@@ -1,4 +1,5 @@
-import { Pressable, View, Modal, TouchableOpacity, Text } from "react-native";
+import React from "react";
+import { Pressable, View, Modal, TouchableOpacity, Text, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import { useState } from "react";
@@ -49,8 +50,9 @@ export function Header({ timeOfDay, onLocationSelected, currentLocation  }: Head
 
     return (
         <>
-            <View style= {{ height: statusBarHeight + 4, backgroundColor: color}} />
+            <StatusBar backgroundColor="transparent" translucent={true} />
             <View className="flex w-full mt-1 justify-end items-end pr-5">
+                <View className="flex flex-row justify-between w-full"  style={{ height: statusBarHeight }} />
                 <Pressable onPress={() => openModal()}>
                         <Ionicons name="earth-sharp" size={30} color="white"/>
                 </Pressable>
